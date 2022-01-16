@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify, make_response
+import json
 from flask_sqlalchemy import SQLAlchemy
 import uuid
 from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
+# import jwt
 import datetime
 from functools import wraps
+from jwks_helper import generate_token, decode_token
 app = Flask(__name__)
 #Adding database
 app.config['SECRET_KEY'] = 'thisissecret'
@@ -33,14 +35,14 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        public_key = open('key/jwt-key.pub').read()
+        # public_key = open('key/jwt-key.pub').read()
         if 'x-access-token' in request.headers:
             token = request.headers['x-access-token']
             print(f'printing new token--->{type(token)}')
         if not token:
             return jsonify({'message': 'Token is missing'}), 401
         try:
-            data = jwt.decode(token, public_key, algorithms=["RS256"])
+            data = decode_token(token)
             current_user = User.query.filter_by(public_id=data['public_id']).first()
         except Exception as e:
             return jsonify({'message': str(e)}), 401
@@ -83,8 +85,7 @@ def get_one_user(current_user):
     return jsonify({'user': user_data})
 
 @app.route('/user', methods=['POST'])
-@token_required
-def create_user(current_user):
+def create_user():
     data = request.get_json()
     hashed_password = generate_password_hash(data['password'], method='sha256')
     new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password, email=data['email'])
@@ -110,21 +111,28 @@ def delete_user(current_user, public_id):
 
 @app.route('/login')
 def login():
+    print("login")
     auth = request.authorization
-    private_key = open('key/jwt-key').read()
     if not auth or not auth.username or not auth.password:
         return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
     
     user = User.query.filter_by(name=auth.username).first()
-
     if not user:
+        print("user")
         return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
     
     if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'public_id' : user.public_id}, private_key, algorithm="RS256")
+        token = generate_token({'public_id' : user.public_id})
         return jsonify({'token': token})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
+
+@app.route('/jwks')
+@token_required
+def get_jwks(current_user):
+    with open('jwks.json', 'r') as f:
+        public_k = json.load(f)
+    return public_k
 
 if __name__ == "__main__":
     app.run(debug=True)
