@@ -14,7 +14,7 @@ def generate_token(payload):
     pk = jwt.algorithms.RSAAlgorithm.from_jwk(json.loads(private_key)) 
     token = jwt.encode(payload, pk, algorithm='RS256')
     jwks_dict = {}
-    
+
     jwks_dict["keys"] = json.loads(public_key)
     with open('jwks.json', 'w') as f:
         json.dump(jwks_dict, f)
@@ -27,5 +27,4 @@ def decode_token(token):
         
     key = jwt.algorithms.RSAAlgorithm.from_jwk(public_k["keys"])
     payload = jwt.decode(token, key, algorithms=['RS256'])
-
     return payload

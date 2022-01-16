@@ -114,7 +114,8 @@ def login():
         return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
     
     if check_password_hash(user.password, auth.password):
-        token = generate_token({'public_id' : user.public_id})
+        payload = {'public_id' : user.public_id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}
+        token = generate_token(payload)
         return jsonify({'token': token})
 
     return make_response('Could not verify', 401, {'WWW-Authenticate': 'Basic realm="Login required!"'})
