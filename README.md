@@ -131,7 +131,6 @@ It contains a set of JWK which is used to decode the token and retrive the messa
 [JSON Web Key Sets](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-sets)  
 [JSON Web Key (JWK)](https://datatracker.ietf.org/doc/html/rfc7517)
 
----
-**NOTE**
+
+##### NOTE
 Due to the time constrains some of the functionalities mentioned in the question is yet to be implemented. 
----
