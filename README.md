@@ -126,11 +126,12 @@ It contains a set of JWK which is used to decode the token and retrive the messa
 
 ## Refrences
 
-[PyJwt Documentation](https://pyjwt.readthedocs.io/en/latest/usage.html)
-[PyCrypto's Documentation](https://pycrypto.readthedocs.io/en/latest/)
+[PyJwt Documentation](https://pyjwt.readthedocs.io/en/latest/usage.html)  
+[PyCrypto's Documentation](https://pycrypto.readthedocs.io/en/latest/)  
+[JSON Web Key Sets](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-sets)  
+[JSON Web Key (JWK)](https://datatracker.ietf.org/doc/html/rfc7517)
 
 ---
 **NOTE**
-
-
+Due to the time constrains some of the functionalities mentioned in the question is yet to be implemented. 
 ---
