@@ -11,11 +11,10 @@ def generate_key():
 
 def generate_token(payload):
     private_key, public_key = generate_key()
-    pk = jwt.algorithms.RSAAlgorithm.from_jwk(json.loads(private_key))
-    # print(pk)
+    pk = jwt.algorithms.RSAAlgorithm.from_jwk(json.loads(private_key)) 
     token = jwt.encode(payload, pk, algorithm='RS256')
-    # print(token)
     jwks_dict = {}
+    
     jwks_dict["keys"] = json.loads(public_key)
     with open('jwks.json', 'w') as f:
         json.dump(jwks_dict, f)

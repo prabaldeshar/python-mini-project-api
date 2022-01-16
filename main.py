@@ -6,10 +6,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # import jwt
 import datetime
 from functools import wraps
-from jwks_helper import generate_token, decode_token
+from jwt_helper import generate_token, decode_token
 app = Flask(__name__)
+
 #Adding database
-app.config['SECRET_KEY'] = 'thisissecret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
@@ -26,10 +26,6 @@ class Todo(db.Model):
     complete = db.Column(db.Boolean)
     user_id = db.Column(db.Integer)
 
-
-# @app.route('/user', methods=['GET'])
-# def get_all_users():
-#     return ''
 
 def token_required(f):
     @wraps(f)
@@ -92,10 +88,6 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"message": "New User Created"})
-
-@app.route('/user/<user_id>', methods=['PUT'])
-def promote_user():
-    return ''
 
 @app.route('/user/<public_id>', methods=['DELETE'])
 @token_required
